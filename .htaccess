@@ -1,0 +1,14 @@
+Options -Indexes
+
+RewriteEngine On
+
+# Nếu URL là gốc thì chuyển hướng đến public/
+RewriteCond %{REQUEST_URI} ^/web-blog-light-novel/?$
+RewriteRule ^$ /web-blog-light-novel/public/ [L,R=302]
+
+# Rewrite từ thư mục public
+RewriteBase /web-blog-light-novel/public/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
