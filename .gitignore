@@ -1,1 +1,6 @@
+
+# Bỏ qua các file cấu hình và file tạm thời
 config.php
+TestController.php
+test.php
+Test.php

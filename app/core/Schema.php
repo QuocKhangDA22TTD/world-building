@@ -8,16 +8,19 @@ class Schema {
         // Bước 2: Kết nối lại với db cụ thể
         $pdo = Database::getInstance();
 
-        // Bước 3: Tạo bảng (nhiều bảng cũng để vào đây)
-        $pdo->exec("
-            CREATE TABLE IF NOT EXISTS users (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(100) NOT NULL,
-                email VARCHAR(100) NOT NULL UNIQUE,
-                password VARCHAR(255) NOT NULL,
-                role ENUM('reader', 'author', 'admin') NOT NULL DEFAULT 'reader',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        ");
+        // Bước 3: Đọc file SQL và thực thi
+        $sqlFilePath = '../../web-blog-light-novel/db/create_schema.sql';
+         // Sử dụng đường dẫn tuyệt đối để tránh lỗi
+        $sql = file_get_contents($sqlFilePath);
+        $sql = str_replace('{{DB_NAME}}', DB_NAME, $sql);
+
+        // Kiểm tra xem file SQL có tồn tại và nội dung hợp lệ không
+        if ($sql === false) {
+            throw new Exception("Không thể đọc file SQL.");
+        }
+
+        // Thực thi câu lệnh SQL
+        $pdo->exec($sql);
     }
 }
+

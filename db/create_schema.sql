@@ -1,0 +1,11 @@
+
+USE {{DB_NAME}};
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('reader', 'author', 'admin') NOT NULL DEFAULT 'reader',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
