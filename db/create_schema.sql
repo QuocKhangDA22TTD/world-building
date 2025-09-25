@@ -1,7 +1,7 @@
 
 USE {{DB_NAME}};
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -11,13 +11,13 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE genres (
+CREATE TABLE IF NOT EXISTS genres (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT
 );
 
-CREATE TABLE novels (
+CREATE TABLE IF NOT EXISTS novels (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -31,7 +31,7 @@ CREATE TABLE novels (
     FOREIGN KEY (genre_id) REFERENCES genres(id)
 );
 
-CREATE TABLE chapters (
+CREATE TABLE IF NOT EXISTS chapters (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,  -- Nội dung chương
@@ -42,7 +42,7 @@ CREATE TABLE chapters (
     FOREIGN KEY (novel_id) REFERENCES novels(id)
 );
 
-CREATE TABLE comments (
+CREATE TABLE IF NOT EXISTS comments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     chapter_id INT,
@@ -52,7 +52,7 @@ CREATE TABLE comments (
     FOREIGN KEY (chapter_id) REFERENCES chapters(id)
 );
 
-CREATE TABLE bookmarks (
+CREATE TABLE IF NOT EXISTS bookmarks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     novel_id INT,
@@ -60,3 +60,4 @@ CREATE TABLE bookmarks (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (novel_id) REFERENCES novels(id)
 );
+
