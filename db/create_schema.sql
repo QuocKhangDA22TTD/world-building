@@ -1,63 +1,47 @@
 
 USE {{DB_NAME}};
 
+-- Bảng người dùng
 CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL UNIQUE,
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role ENUM('reader', 'author', 'admin') DEFAULT 'reader',
+    email VARCHAR(150) UNIQUE
+);
+
+-- Bảng thế giới
+CREATE TABLE IF NOT EXISTS worlds (
+    world_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    name VARCHAR(255) NOT NULL,
+    article LONGTEXT, -- Bài viết chi tiết như Wikipedia
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS genres (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT
+-- Bảng thực thể
+CREATE TABLE IF NOT EXISTS entities (
+    entity_id INT AUTO_INCREMENT PRIMARY KEY,
+    world_id INT,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(100), -- Ví dụ: nhân vật, sinh vật, sự kiện, vũ khí...
+    article LONGTEXT,  -- Bài viết chi tiết như Wikipedia
+    attributes JSON,   -- Thuộc tính động dạng JSON
+    FOREIGN KEY (world_id) REFERENCES worlds(world_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS novels (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+-- Bảng mối quan hệ giữa các thực thể
+CREATE TABLE IF NOT EXISTS relationships (
+    relationship_id INT AUTO_INCREMENT PRIMARY KEY,
+    world_id INT,
+    entity1_id INT,
+    entity2_id INT,
+    type VARCHAR(100) NOT NULL,   -- Ví dụ: gia đình, bạn bè, kẻ thù
     description TEXT,
-    cover_image VARCHAR(255),  -- Link đến ảnh bìa
-    status ENUM('ongoing', 'completed') DEFAULT 'ongoing',
-    author_id INT,
-    genre_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (author_id) REFERENCES users(id),
-    FOREIGN KEY (genre_id) REFERENCES genres(id)
+    FOREIGN KEY (world_id) REFERENCES worlds(world_id) ON DELETE CASCADE,
+    FOREIGN KEY (entity1_id) REFERENCES entities(entity_id) ON DELETE CASCADE,
+    FOREIGN KEY (entity2_id) REFERENCES entities(entity_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS chapters (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,  -- Nội dung chương
-    novel_id INT,
-    chapter_number INT,  -- Số chương
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (novel_id) REFERENCES novels(id)
-);
 
-CREATE TABLE IF NOT EXISTS comments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    chapter_id INT,
-    content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (chapter_id) REFERENCES chapters(id)
-);
-
-CREATE TABLE IF NOT EXISTS bookmarks (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    novel_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (novel_id) REFERENCES novels(id)
-);
 
