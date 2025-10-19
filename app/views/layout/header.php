@@ -6,7 +6,7 @@
     <title>Trang chủ</title>
 
 <?php
-$cssDir = __DIR__ . '/../../public/css'; // đường dẫn tuyệt đối đến thư mục css
+$cssDir = __DIR__ . '/../../../public/css'; // đường dẫn tuyệt đối đến thư mục css
 
 // Lấy danh sách tất cả các file CSS
 $cssFiles = glob($cssDir . '/*.css');
