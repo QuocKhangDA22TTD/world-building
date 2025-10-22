@@ -1,5 +1,38 @@
 -- =====================================================
--- SCRIPT KIỂM TRA HỆ THỐNG PHÂN QUYỀN
+-- SCRIPT QUẢN LÝ HỆ THỐNG PHÂN QUYỀN
+-- =====================================================
+-- File này bao gồm:
+-- 1. Migration: Tạo/cập nhật role system
+-- 2. Queries: Kiểm tra và thống kê permissions
+-- =====================================================
+
+-- =====================================================
+-- PHẦN 1: MIGRATION - Chạy lần đầu để setup
+-- =====================================================
+
+-- Bước 1: Kiểm tra xem cột role đã tồn tại chưa
+-- SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 
+-- WHERE TABLE_NAME = 'users' AND COLUMN_NAME = 'role';
+
+-- Bước 2: Thêm cột role nếu chưa có (cho hệ thống cũ)
+-- ALTER TABLE users 
+-- ADD COLUMN role ENUM('user', 'admin') DEFAULT 'user' AFTER email;
+
+-- Bước 3: Mở rộng role từ 2 cấp lên 4 cấp (nếu đã có role)
+-- ALTER TABLE users 
+-- MODIFY COLUMN role ENUM('user', 'moderator', 'admin', 'super_admin') DEFAULT 'user';
+
+-- Bước 4: Tạo tài khoản admin mặc định
+-- Password hash cho 'admin123' với bcrypt cost 12
+-- INSERT INTO users (username, email, password, role) 
+-- VALUES 
+--     ('superadmin', 'superadmin@worldbuilding.local', '$2y$12$LQv3c1yy2kBz3KZ5J8b6g.p7/AYf9h3F5B1O9Z3x6KJ5L7M8N9O0P', 'super_admin'),
+--     ('admin', 'admin@worldbuilding.local', '$2y$12$LQv3c1yy2kBz3KZ5J8b6g.p7/AYf9h3F5B1O9Z3x6KJ5L7M8N9O0P', 'admin'),
+--     ('moderator', 'moderator@worldbuilding.local', '$2y$12$LQv3c1yy2kBz3KZ5J8b6g.p7/AYf9h3F5B1O9Z3x6KJ5L7M8N9O0P', 'moderator')
+-- ON DUPLICATE KEY UPDATE role = VALUES(role);
+
+-- =====================================================
+-- PHẦN 2: KIỂM TRA - Queries để xem thông tin
 -- =====================================================
 
 -- 1. Kiểm tra cấu trúc cột role

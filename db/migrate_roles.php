@@ -12,10 +12,21 @@ try {
     
     echo "=== NÂNG CẤP HỆ THỐNG PHÂN QUYỀN ===\n\n";
     
-    // Bước 1: Mở rộng ENUM role
-    echo "Bước 1: Mở rộng cột role...\n";
-    $db->exec("ALTER TABLE users MODIFY COLUMN role ENUM('user', 'moderator', 'admin', 'super_admin') DEFAULT 'user'");
-    echo "✓ Đã mở rộng role: user, moderator, admin, super_admin\n\n";
+    // Bước 1: Kiểm tra và tạo/mở rộng cột role
+    echo "Bước 1: Kiểm tra cột role...\n";
+    $checkColumn = $db->query("SHOW COLUMNS FROM users LIKE 'role'");
+    
+    if ($checkColumn->rowCount() == 0) {
+        // Cột role chưa tồn tại → Tạo mới với 4 cấp
+        echo "  → Cột role chưa tồn tại, đang tạo mới...\n";
+        $db->exec("ALTER TABLE users ADD COLUMN role ENUM('user', 'moderator', 'admin', 'super_admin') DEFAULT 'user' AFTER email");
+        echo "✓ Đã tạo cột role với 4 cấp: user, moderator, admin, super_admin\n\n";
+    } else {
+        // Cột role đã tồn tại → Mở rộng ENUM
+        echo "  → Cột role đã tồn tại, đang mở rộng...\n";
+        $db->exec("ALTER TABLE users MODIFY COLUMN role ENUM('user', 'moderator', 'admin', 'super_admin') DEFAULT 'user'");
+        echo "✓ Đã mở rộng role thành 4 cấp: user, moderator, admin, super_admin\n\n";
+    }
     
     // Bước 2: Tạo tài khoản super_admin
     echo "Bước 2: Tạo tài khoản Super Admin...\n";
