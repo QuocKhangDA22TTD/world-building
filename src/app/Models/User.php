@@ -12,6 +12,10 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    const UPDATED_AT = null;
+
+    protected $with = ['role'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +25,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
+        'role_id',
     ];
 
     /**
@@ -44,5 +50,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function worlds()
+    {
+        return $this->hasMany(World::class, 'owner_id');
+    }
+
+    public function isAdmin()
+    {
+        return $this->role && in_array($this->role->name, ['admin', 'super_admin']);
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->role && $this->role->name === 'super_admin';
     }
 }
