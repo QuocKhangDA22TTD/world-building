@@ -35,7 +35,7 @@ class WorldController extends Controller
     {
         $this->authorize('view', $world);
         
-        $world->load(['entityTypes', 'entities.entityType', 'tags']);
+        $world->load(['entityTypes', 'entities.entityType', 'tags', 'relationships']);
         return view('worlds.show', compact('world'));
     }
 

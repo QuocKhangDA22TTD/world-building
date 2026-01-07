@@ -9,6 +9,11 @@ use App\Http\Controllers\EntityController;
 use App\Http\Controllers\RelationshipController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\AIGeneratorController;
+
+// Language switch
+Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
 
 // Guest routes
 Route::get('/', function () {
@@ -30,6 +35,11 @@ Route::middleware('auth')->group(function () {
 
     // Worlds
     Route::resource('worlds', WorldController::class);
+
+    // AI Generator
+    Route::get('/ai-generator', [AIGeneratorController::class, 'create'])->name('ai-generator.create');
+    Route::post('/ai-generator', [AIGeneratorController::class, 'generate'])->name('ai-generator.generate');
+    Route::post('/api/ai-generator', [AIGeneratorController::class, 'generateApi'])->name('ai-generator.api');
 
     // Entity Types
     Route::get('/entity-types', [EntityTypeController::class, 'index'])->name('entity-types.index');

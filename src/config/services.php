@@ -15,11 +15,7 @@ return [
     */
 
     'postmark' => [
-        'key' => env('POSTMARK_API_KEY'),
-    ],
-
-    'resend' => [
-        'key' => env('RESEND_API_KEY'),
+        'token' => env('POSTMARK_TOKEN'),
     ],
 
     'ses' => [
@@ -28,11 +24,30 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'resend' => [
+        'key' => env('RESEND_KEY'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Gemini AI Service
+    |--------------------------------------------------------------------------
+    |
+    | API keys cho Google Gemini AI. Hỗ trợ nhiều keys để xoay vòng khi
+    | một key bị rate limit. Các keys phân cách bằng dấu phẩy.
+    |
+    | Ví dụ: GEMINI_API_KEYS=key1,key2,key3
+    |
+    */
+    'gemini' => [
+        'api_keys' => env('GEMINI_API_KEYS', ''),
     ],
 
 ];
