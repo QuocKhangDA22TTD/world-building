@@ -238,6 +238,178 @@ PROMPT;
     }
     
     /**
+     * Chỉnh sửa World dựa trên yêu cầu của người dùng
+     */
+    public function modifyWorld(array $worldData, string $userRequest, string $language = 'vi'): ?array
+    {
+        $langInstruction = $language === 'vi' 
+            ? 'Trả lời bằng tiếng Việt.' 
+            : 'Respond in English.';
+        
+        $worldJson = json_encode($worldData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        
+        $prompt = <<<PROMPT
+{$langInstruction}
+Bạn là một AI chuyên chỉnh sửa thế giới (world building) cho game, truyện, phim.
+
+DỮ LIỆU THẾ GIỚI HIỆN TẠI:
+{$worldJson}
+
+YÊU CẦU CHỈNH SỬA TỪ NGƯỜI DÙNG:
+{$userRequest}
+
+Hãy phân tích yêu cầu và trả về JSON với các thay đổi cần thực hiện. Chỉ trả về những phần cần thay đổi/thêm/xóa.
+
+Trả về JSON với cấu trúc CHÍNH XÁC như sau (không thêm markdown, chỉ JSON thuần):
+{
+    "action_summary": "Tóm tắt ngắn gọn những gì sẽ thay đổi",
+    "changes": {
+        "world": {
+            "update": {"name": "Tên mới", "description": "Mô tả mới"} 
+        },
+        "entity_types": {
+            "add": [{"name": "Loại mới"}],
+            "remove": ["Tên loại cần xóa"],
+            "update": [{"old_name": "Tên cũ", "new_name": "Tên mới"}]
+        },
+        "entities": {
+            "add": [{"name": "Tên", "type": "Loại", "description": "Mô tả"}],
+            "remove": ["Tên entity cần xóa"],
+            "update": [{"name": "Tên entity", "changes": {"description": "Mô tả mới", "type": "Loại mới"}}]
+        },
+        "relationships": {
+            "add": [{"from": "Entity 1", "to": "Entity 2", "type": "Loại quan hệ", "description": "Mô tả"}],
+            "remove": [{"from": "Entity 1", "to": "Entity 2"}],
+            "update": [{"from": "Entity 1", "to": "Entity 2", "changes": {"type": "Loại mới", "description": "Mô tả mới"}}]
+        },
+        "tags": {
+            "add": [{"name": "Tag mới"}],
+            "remove": ["Tên tag cần xóa"]
+        },
+        "entity_tags": {
+            "add": [{"entity": "Tên entity", "tags": ["Tag 1", "Tag 2"]}],
+            "remove": [{"entity": "Tên entity", "tags": ["Tag cần gỡ"]}]
+        }
+    }
+}
+
+QUY TẮC:
+- CHỈ bao gồm các phần có thay đổi, bỏ qua phần không thay đổi
+- Nếu không có thay đổi cho một loại (entity_types, entities, etc.), không cần đưa vào JSON
+- Đảm bảo tên entity/type/tag khớp chính xác với dữ liệu hiện có khi update/remove
+- Khi thêm entity mới, type phải là một trong các entity_types hiện có hoặc mới thêm
+- Mô tả chi tiết, sáng tạo và phù hợp với thế giới hiện tại
+- CHỈ trả về JSON, không có text khác
+PROMPT;
+
+        $result = $this->generate($prompt);
+        
+        if (!$result || !$result['success']) {
+            return $result;
+        }
+        
+        // Parse JSON từ response
+        $text = $result['text'];
+        
+        // Loại bỏ markdown code block nếu có
+        $text = preg_replace('/```json\s*/', '', $text);
+        $text = preg_replace('/```\s*/', '', $text);
+        $text = trim($text);
+        
+        $parsed = json_decode($text, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Log::error('Gemini ModifyWorld: Không thể parse JSON - ' . json_last_error_msg());
+            Log::error('Raw text: ' . $text);
+            return [
+                'success' => false,
+                'error' => 'Không thể xử lý phản hồi từ AI'
+            ];
+        }
+        
+        return [
+            'success' => true,
+            'data' => $parsed
+        ];
+    }
+    
+    /**
+     * Chat với AI về thế giới (không thay đổi dữ liệu, chỉ trả lời câu hỏi)
+     */
+    public function chatAboutWorld(array $worldData, string $userMessage, array $chatHistory = [], string $language = 'vi'): ?array
+    {
+        $langInstruction = $language === 'vi' 
+            ? 'Trả lời bằng tiếng Việt.' 
+            : 'Respond in English.';
+        
+        $worldJson = json_encode($worldData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        
+        // Build chat history context
+        $historyContext = '';
+        if (!empty($chatHistory)) {
+            $historyContext = "\n\nLỊCH SỬ HỘI THOẠI:\n";
+            foreach ($chatHistory as $msg) {
+                $role = $msg['role'] === 'user' ? 'Người dùng' : 'AI';
+                $historyContext .= "{$role}: {$msg['content']}\n";
+            }
+        }
+        
+        $prompt = <<<PROMPT
+{$langInstruction}
+Bạn là một AI trợ lý chuyên về world building. Bạn đang giúp người dùng với thế giới của họ.
+
+DỮ LIỆU THẾ GIỚI:
+{$worldJson}
+{$historyContext}
+
+TIN NHẮN MỚI TỪ NGƯỜI DÙNG:
+{$userMessage}
+
+Hãy phân tích tin nhắn và xác định người dùng muốn:
+1. HỎI THÔNG TIN về thế giới (trả lời câu hỏi)
+2. YÊU CẦU CHỈNH SỬA thế giới (thêm/sửa/xóa entities, relationships, etc.)
+
+Trả về JSON với cấu trúc:
+{
+    "intent": "question" hoặc "modification",
+    "response": "Câu trả lời cho người dùng",
+    "modification_request": "Nếu intent là modification, mô tả lại yêu cầu chỉnh sửa rõ ràng để xử lý"
+}
+
+CHỈ trả về JSON, không có text khác.
+PROMPT;
+
+        $result = $this->generate($prompt);
+        
+        if (!$result || !$result['success']) {
+            return $result;
+        }
+        
+        $text = $result['text'];
+        $text = preg_replace('/```json\s*/', '', $text);
+        $text = preg_replace('/```\s*/', '', $text);
+        $text = trim($text);
+        
+        $parsed = json_decode($text, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            // Fallback: treat as simple response
+            return [
+                'success' => true,
+                'data' => [
+                    'intent' => 'question',
+                    'response' => $result['text']
+                ]
+            ];
+        }
+        
+        return [
+            'success' => true,
+            'data' => $parsed
+        ];
+    }
+    
+    /**
      * Kiểm tra API keys có sẵn không
      */
     public function hasApiKeys(): bool

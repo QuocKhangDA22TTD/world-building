@@ -40,6 +40,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/ai-generator', [AIGeneratorController::class, 'create'])->name('ai-generator.create');
     Route::post('/ai-generator', [AIGeneratorController::class, 'generate'])->name('ai-generator.generate');
     Route::post('/api/ai-generator', [AIGeneratorController::class, 'generateApi'])->name('ai-generator.api');
+    
+    // AI Chat for World Modification
+    Route::post('/api/worlds/{world}/ai-chat', [AIGeneratorController::class, 'chat'])->name('ai-chat.send');
+    Route::post('/api/worlds/{world}/ai-apply', [AIGeneratorController::class, 'applyChanges'])->name('ai-chat.apply');
 
     // Entity Types
     Route::get('/entity-types', [EntityTypeController::class, 'index'])->name('entity-types.index');

@@ -22,6 +22,363 @@ class AIGeneratorController extends Controller
     }
     
     /**
+     * Chat với AI về world (API endpoint)
+     */
+    public function chat(Request $request, World $world)
+    {
+        // Kiểm tra quyền sở hữu
+        if ($world->owner_id !== auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'error' => __('You do not have permission to modify this world')
+            ], 403);
+        }
+        
+        $request->validate([
+            'message' => 'required|string|min:1|max:2000',
+            'chat_history' => 'array|max:20',
+        ]);
+        
+        if (!$this->gemini->hasApiKeys()) {
+            return response()->json([
+                'success' => false,
+                'error' => __('AI service is not configured')
+            ], 503);
+        }
+        
+        // Lấy dữ liệu world hiện tại
+        $worldData = $this->getWorldData($world);
+        $language = app()->getLocale();
+        $chatHistory = $request->input('chat_history', []);
+        
+        // Gọi AI để phân tích tin nhắn
+        $result = $this->gemini->chatAboutWorld($worldData, $request->message, $chatHistory, $language);
+        
+        if (!$result || !$result['success']) {
+            return response()->json([
+                'success' => false,
+                'error' => $result['error'] ?? __('Failed to process message')
+            ], 500);
+        }
+        
+        $data = $result['data'];
+        
+        // Nếu là yêu cầu chỉnh sửa
+        if (($data['intent'] ?? '') === 'modification' && !empty($data['modification_request'])) {
+            // Gọi AI để tạo changes
+            $modifyResult = $this->gemini->modifyWorld($worldData, $data['modification_request'], $language);
+            
+            if ($modifyResult && $modifyResult['success']) {
+                return response()->json([
+                    'success' => true,
+                    'intent' => 'modification',
+                    'response' => $data['response'],
+                    'changes' => $modifyResult['data'],
+                    'requires_confirmation' => true
+                ]);
+            }
+        }
+        
+        // Trả về câu trả lời thông thường
+        return response()->json([
+            'success' => true,
+            'intent' => $data['intent'] ?? 'question',
+            'response' => $data['response'] ?? __('I could not understand your request.')
+        ]);
+    }
+    
+    /**
+     * Áp dụng các thay đổi từ AI
+     */
+    public function applyChanges(Request $request, World $world)
+    {
+        // Kiểm tra quyền sở hữu
+        if ($world->owner_id !== auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'error' => __('You do not have permission to modify this world')
+            ], 403);
+        }
+        
+        $request->validate([
+            'changes' => 'required|array',
+        ]);
+        
+        try {
+            $changes = $request->input('changes');
+            $appliedChanges = $this->applyWorldChanges($world, $changes);
+            
+            // Reload world data
+            $world->refresh();
+            $world->load(['entityTypes', 'entities.entityType', 'entities.tags', 'relationships.fromEntity', 'relationships.toEntity', 'tags']);
+            
+            return response()->json([
+                'success' => true,
+                'message' => __('Changes applied successfully!'),
+                'applied' => $appliedChanges,
+                'world' => $this->getWorldData($world)
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('AI Apply Changes Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => __('Failed to apply changes: ') . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Lấy dữ liệu world dạng array
+     */
+    protected function getWorldData(World $world): array
+    {
+        $world->load(['entityTypes', 'entities.entityType', 'entities.tags', 'relationships.fromEntity', 'relationships.toEntity', 'tags']);
+        
+        return [
+            'world' => [
+                'id' => $world->id,
+                'name' => $world->name,
+                'description' => $world->description,
+            ],
+            'entity_types' => $world->entityTypes->map(fn($t) => ['id' => $t->id, 'name' => $t->name])->toArray(),
+            'entities' => $world->entities->map(fn($e) => [
+                'id' => $e->id,
+                'name' => $e->name,
+                'type' => $e->entityType->name ?? null,
+                'description' => $e->description,
+            ])->toArray(),
+            'relationships' => $world->relationships->map(fn($r) => [
+                'id' => $r->id,
+                'from' => $r->fromEntity->name ?? null,
+                'to' => $r->toEntity->name ?? null,
+                'type' => $r->relation_type,
+                'description' => $r->description,
+            ])->toArray(),
+            'tags' => $world->tags->map(fn($t) => ['id' => $t->id, 'name' => $t->name])->toArray(),
+            'entity_tags' => $world->entities->filter(fn($e) => $e->tags->isNotEmpty())->map(fn($e) => [
+                'entity' => $e->name,
+                'tags' => $e->tags->pluck('name')->toArray(),
+            ])->values()->toArray(),
+        ];
+    }
+    
+    /**
+     * Áp dụng các thay đổi vào world
+     */
+    protected function applyWorldChanges(World $world, array $changes): array
+    {
+        $applied = [];
+        
+        return DB::transaction(function () use ($world, $changes, &$applied) {
+            $changesData = $changes['changes'] ?? $changes;
+            
+            // 1. Update World info
+            if (!empty($changesData['world']['update'])) {
+                $updateData = $changesData['world']['update'];
+                if (!empty($updateData['name'])) {
+                    $world->name = $updateData['name'];
+                }
+                if (!empty($updateData['description'])) {
+                    $world->description = $updateData['description'];
+                }
+                $world->save();
+                $applied['world_updated'] = true;
+            }
+            
+            // 2. Entity Types
+            if (!empty($changesData['entity_types'])) {
+                // Add new types
+                foreach ($changesData['entity_types']['add'] ?? [] as $typeData) {
+                    EntityType::create([
+                        'world_id' => $world->id,
+                        'name' => $typeData['name'],
+                    ]);
+                    $applied['entity_types_added'][] = $typeData['name'];
+                }
+                
+                // Remove types
+                foreach ($changesData['entity_types']['remove'] ?? [] as $typeName) {
+                    EntityType::where('world_id', $world->id)
+                        ->where('name', $typeName)
+                        ->delete();
+                    $applied['entity_types_removed'][] = $typeName;
+                }
+                
+                // Update types
+                foreach ($changesData['entity_types']['update'] ?? [] as $typeUpdate) {
+                    EntityType::where('world_id', $world->id)
+                        ->where('name', $typeUpdate['old_name'])
+                        ->update(['name' => $typeUpdate['new_name']]);
+                    $applied['entity_types_updated'][] = $typeUpdate;
+                }
+            }
+            
+            // 3. Tags (process before entities for entity_tags)
+            if (!empty($changesData['tags'])) {
+                foreach ($changesData['tags']['add'] ?? [] as $tagData) {
+                    Tag::create([
+                        'world_id' => $world->id,
+                        'name' => $tagData['name'],
+                    ]);
+                    $applied['tags_added'][] = $tagData['name'];
+                }
+                
+                foreach ($changesData['tags']['remove'] ?? [] as $tagName) {
+                    Tag::where('world_id', $world->id)
+                        ->where('name', $tagName)
+                        ->delete();
+                    $applied['tags_removed'][] = $tagName;
+                }
+            }
+            
+            // 4. Entities
+            if (!empty($changesData['entities'])) {
+                // Add new entities
+                foreach ($changesData['entities']['add'] ?? [] as $entityData) {
+                    $typeId = null;
+                    if (!empty($entityData['type'])) {
+                        $type = EntityType::where('world_id', $world->id)
+                            ->where('name', $entityData['type'])
+                            ->first();
+                        $typeId = $type?->id;
+                    }
+                    
+                    Entity::create([
+                        'world_id' => $world->id,
+                        'entity_type_id' => $typeId,
+                        'name' => $entityData['name'],
+                        'description' => $entityData['description'] ?? '',
+                    ]);
+                    $applied['entities_added'][] = $entityData['name'];
+                }
+                
+                // Remove entities
+                foreach ($changesData['entities']['remove'] ?? [] as $entityName) {
+                    Entity::where('world_id', $world->id)
+                        ->where('name', $entityName)
+                        ->delete();
+                    $applied['entities_removed'][] = $entityName;
+                }
+                
+                // Update entities
+                foreach ($changesData['entities']['update'] ?? [] as $entityUpdate) {
+                    $entity = Entity::where('world_id', $world->id)
+                        ->where('name', $entityUpdate['name'])
+                        ->first();
+                    
+                    if ($entity && !empty($entityUpdate['changes'])) {
+                        $updateData = [];
+                        if (isset($entityUpdate['changes']['description'])) {
+                            $updateData['description'] = $entityUpdate['changes']['description'];
+                        }
+                        if (isset($entityUpdate['changes']['name'])) {
+                            $updateData['name'] = $entityUpdate['changes']['name'];
+                        }
+                        if (isset($entityUpdate['changes']['type'])) {
+                            $type = EntityType::where('world_id', $world->id)
+                                ->where('name', $entityUpdate['changes']['type'])
+                                ->first();
+                            if ($type) {
+                                $updateData['entity_type_id'] = $type->id;
+                            }
+                        }
+                        if (!empty($updateData)) {
+                            $entity->update($updateData);
+                            $applied['entities_updated'][] = $entityUpdate['name'];
+                        }
+                    }
+                }
+            }
+            
+            // 5. Relationships
+            if (!empty($changesData['relationships'])) {
+                // Add new relationships
+                foreach ($changesData['relationships']['add'] ?? [] as $relData) {
+                    $fromEntity = Entity::where('world_id', $world->id)
+                        ->where('name', $relData['from'])
+                        ->first();
+                    $toEntity = Entity::where('world_id', $world->id)
+                        ->where('name', $relData['to'])
+                        ->first();
+                    
+                    if ($fromEntity && $toEntity) {
+                        Relationship::create([
+                            'world_id' => $world->id,
+                            'from_entity_id' => $fromEntity->id,
+                            'to_entity_id' => $toEntity->id,
+                            'relation_type' => $relData['type'] ?? 'related',
+                            'description' => $relData['description'] ?? '',
+                        ]);
+                        $applied['relationships_added'][] = "{$relData['from']} -> {$relData['to']}";
+                    }
+                }
+                
+                // Remove relationships
+                foreach ($changesData['relationships']['remove'] ?? [] as $relData) {
+                    $fromEntity = Entity::where('world_id', $world->id)
+                        ->where('name', $relData['from'])
+                        ->first();
+                    $toEntity = Entity::where('world_id', $world->id)
+                        ->where('name', $relData['to'])
+                        ->first();
+                    
+                    if ($fromEntity && $toEntity) {
+                        Relationship::where('world_id', $world->id)
+                            ->where('from_entity_id', $fromEntity->id)
+                            ->where('to_entity_id', $toEntity->id)
+                            ->delete();
+                        $applied['relationships_removed'][] = "{$relData['from']} -> {$relData['to']}";
+                    }
+                }
+            }
+            
+            // 6. Entity Tags
+            if (!empty($changesData['entity_tags'])) {
+                // Add tags to entities
+                foreach ($changesData['entity_tags']['add'] ?? [] as $etData) {
+                    $entity = Entity::where('world_id', $world->id)
+                        ->where('name', $etData['entity'])
+                        ->first();
+                    
+                    if ($entity) {
+                        $tagIds = Tag::where('world_id', $world->id)
+                            ->whereIn('name', $etData['tags'] ?? [])
+                            ->pluck('id')
+                            ->toArray();
+                        
+                        if (!empty($tagIds)) {
+                            $entity->tags()->syncWithoutDetaching($tagIds);
+                            $applied['entity_tags_added'][] = $etData['entity'];
+                        }
+                    }
+                }
+                
+                // Remove tags from entities
+                foreach ($changesData['entity_tags']['remove'] ?? [] as $etData) {
+                    $entity = Entity::where('world_id', $world->id)
+                        ->where('name', $etData['entity'])
+                        ->first();
+                    
+                    if ($entity) {
+                        $tagIds = Tag::where('world_id', $world->id)
+                            ->whereIn('name', $etData['tags'] ?? [])
+                            ->pluck('id')
+                            ->toArray();
+                        
+                        if (!empty($tagIds)) {
+                            $entity->tags()->detach($tagIds);
+                            $applied['entity_tags_removed'][] = $etData['entity'];
+                        }
+                    }
+                }
+            }
+            
+            return $applied;
+        });
+    }
+    
+    /**
      * Hiển thị form tạo world bằng AI
      */
     public function create()
