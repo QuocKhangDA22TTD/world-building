@@ -6,15 +6,15 @@
 <div class="max-w-2xl mx-auto">
     <!-- Header -->
     <div class="mb-8 animate-fade-in-up">
-        <div class="flex items-center space-x-2 text-gray-400 text-sm mb-2">
-            <a href="{{ route('worlds.index') }}" class="hover:text-white transition-colors">{{ __('Worlds') }}</a>
+        <div class="flex items-center space-x-2 text-theme-muted text-sm mb-2">
+            <a href="{{ route('worlds.index') }}" class="hover:text-theme-primary transition-colors">{{ __('Worlds') }}</a>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
-            <span class="text-white">{{ __('Create New World') }}</span>
+            <span class="text-theme-primary">{{ __('Create New World') }}</span>
         </div>
-        <h1 class="text-3xl font-bold text-white">{{ __('Create New World') }}</h1>
-        <p class="text-gray-400 mt-2">{{ __('Build a new universe for your stories and characters') }}</p>
+        <h1 class="text-3xl font-bold text-theme-primary">{{ __('Create New World') }}</h1>
+        <p class="text-theme-muted mt-2">{{ __('Build a new universe for your stories and characters') }}</p>
     </div>
 
     <!-- Form -->
@@ -24,7 +24,7 @@
             
             <!-- World Name -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-theme-secondary mb-2">
                     {{ __('World Name') }} <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
@@ -41,23 +41,23 @@
 
             <!-- Description -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('Description') }}</label>
+                <label class="block text-sm font-medium text-theme-secondary mb-2">{{ __('Description') }}</label>
                 <textarea name="description" rows="5"
                     class="input-modern w-full resize-none"
                     placeholder="{{ __('Describe your world...') }}">{{ old('description') }}</textarea>
             </div>
 
             <!-- Tips -->
-            <div class="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
+            <div class="bg-indigo-50 dark:bg-indigo-900/30 rounded-xl p-4 border border-indigo-100 dark:border-indigo-800">
                 <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-800 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-indigo-800">{{ __('Tips for creating a great world') }}</p>
-                        <ul class="text-sm text-indigo-600 mt-1 space-y-1">
+                        <p class="text-sm font-medium text-indigo-800 dark:text-indigo-300">{{ __('Tips for creating a great world') }}</p>
+                        <ul class="text-sm text-indigo-600 dark:text-indigo-400 mt-1 space-y-1">
                             <li>• {{ __('Give your world a memorable, unique name') }}</li>
                             <li>• {{ __('Describe the setting, time period, or genre') }}</li>
                             <li>• {{ __('Think about what makes your world special') }}</li>
@@ -67,7 +67,7 @@
             </div>
 
             <!-- Actions -->
-            <div class="flex items-center justify-end space-x-4 pt-4 border-t border-gray-100">
+            <div class="flex items-center justify-end space-x-4 pt-4 border-t border-gray-100 dark:border-white/10">
                 <a href="{{ route('worlds.index') }}" class="btn-secondary">{{ __('Cancel') }}</a>
                 <button type="submit" class="btn-primary flex items-center space-x-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

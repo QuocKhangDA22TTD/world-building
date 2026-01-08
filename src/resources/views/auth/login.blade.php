@@ -12,8 +12,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </div>
-            <h1 class="text-3xl font-bold text-white mb-2">{{ __('Welcome Back') }}</h1>
-            <p class="text-gray-400">{{ __('Sign in to continue building your worlds') }}</p>
+            <h1 class="text-3xl font-bold text-theme-primary mb-2">{{ __('Welcome Back') }}</h1>
+            <p class="text-theme-muted">{{ __('Sign in to continue building your worlds') }}</p>
         </div>
 
         <!-- Login Form -->
@@ -23,7 +23,7 @@
                 
                 <!-- Email -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('Email Address') }}</label>
+                    <label class="block text-sm font-medium text-theme-secondary mb-2">{{ __('Email Address') }}</label>
                     <div class="input-icon-wrapper">
                         <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
@@ -36,7 +36,7 @@
 
                 <!-- Password -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('Password') }}</label>
+                    <label class="block text-sm font-medium text-theme-secondary mb-2">{{ __('Password') }}</label>
                     <div class="input-icon-wrapper">
                         <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
@@ -51,7 +51,7 @@
                 <div class="flex items-center justify-between">
                     <label class="flex items-center">
                         <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                        <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                        <span class="ml-2 text-sm text-theme-secondary">{{ __('Remember me') }}</span>
                     </label>
                 </div>
 
@@ -67,10 +67,10 @@
             <!-- Divider -->
             <div class="relative my-6">
                 <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-200"></div>
+                    <div class="w-full border-t border-gray-200 dark:border-white/10"></div>
                 </div>
                 <div class="relative flex justify-center text-sm">
-                    <span class="px-4 bg-white text-gray-500">{{ __('New to World Building?') }}</span>
+                    <span class="px-4 bg-white dark:bg-slate-800 text-theme-muted rounded">{{ __('New to World Building?') }}</span>
                 </div>
             </div>
 
@@ -82,17 +82,17 @@
 
         <!-- Demo Accounts -->
         <div class="mt-6 glass-card rounded-xl p-4 animate-fade-in-up stagger-2" style="opacity: 0;">
-            <p class="text-sm text-gray-600 text-center mb-3">{{ __('Demo Accounts') }}:</p>
+            <p class="text-sm text-theme-secondary text-center mb-3">{{ __('Demo Accounts') }}:</p>
             <div class="grid grid-cols-2 gap-3 text-xs">
-                <div class="bg-gray-50 rounded-lg p-3">
-                    <p class="font-semibold text-gray-700">{{ __('Admin') }}</p>
-                    <p class="text-gray-500">admin@example.com</p>
-                    <p class="text-gray-400">password</p>
+                <div class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-3">
+                    <p class="font-semibold text-theme-primary">{{ __('Admin') }}</p>
+                    <p class="text-theme-muted">admin@example.com</p>
+                    <p class="text-theme-muted">password</p>
                 </div>
-                <div class="bg-gray-50 rounded-lg p-3">
-                    <p class="font-semibold text-gray-700">{{ __('User') }}</p>
-                    <p class="text-gray-500">user@example.com</p>
-                    <p class="text-gray-400">password</p>
+                <div class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-3">
+                    <p class="font-semibold text-theme-primary">{{ __('User') }}</p>
+                    <p class="text-theme-muted">user@example.com</p>
+                    <p class="text-theme-muted">password</p>
                 </div>
             </div>
         </div>

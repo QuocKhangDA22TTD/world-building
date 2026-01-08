@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ app()->getLocale() }}" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+        // Check for saved theme preference or default to dark
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
 </head>
-<body class="bg-gradient-mesh min-h-screen">
+<body class="bg-theme min-h-screen transition-colors duration-300">
     <!-- Star Rain Effect -->
     <div class="stars-container" id="stars-container"></div>
     
@@ -74,7 +82,7 @@
                 <div class="flex items-center space-x-4">
                     <!-- Language Switcher -->
                     <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                        <button @click="open = !open" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-theme-secondary hover:text-theme-primary hover:bg-white/10 dark:hover:bg-white/10 transition-all duration-200">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
                             </svg>
@@ -93,7 +101,7 @@
                              x-transition:leave-end="opacity-0 transform scale-95"
                              class="absolute right-0 mt-2 w-40 glass-card rounded-xl shadow-xl overflow-hidden z-50">
                             <a href="{{ route('language.switch', 'en') }}" 
-                               class="flex items-center space-x-3 px-4 py-3 hover:bg-indigo-50 transition-colors {{ app()->getLocale() == 'en' ? 'bg-indigo-50 text-indigo-600' : 'text-gray-700' }}">
+                               class="flex items-center space-x-3 px-4 py-3 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors {{ app()->getLocale() == 'en' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600' : 'text-theme-primary' }}">
                                 <span class="text-lg">🇺🇸</span>
                                 <span class="font-medium">English</span>
                                 @if(app()->getLocale() == 'en')
@@ -103,7 +111,7 @@
                                 @endif
                             </a>
                             <a href="{{ route('language.switch', 'vi') }}" 
-                               class="flex items-center space-x-3 px-4 py-3 hover:bg-indigo-50 transition-colors {{ app()->getLocale() == 'vi' ? 'bg-indigo-50 text-indigo-600' : 'text-gray-700' }}">
+                               class="flex items-center space-x-3 px-4 py-3 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors {{ app()->getLocale() == 'vi' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600' : 'text-theme-primary' }}">
                                 <span class="text-lg">🇻🇳</span>
                                 <span class="font-medium">Tiếng Việt</span>
                                 @if(app()->getLocale() == 'vi')
@@ -115,18 +123,32 @@
                         </div>
                     </div>
 
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="theme-toggle" title="{{ __('Toggle theme') }}">
+                        <span class="theme-toggle-circle">
+                            <!-- Sun Icon -->
+                            <svg class="theme-toggle-icon sun-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                            </svg>
+                            <!-- Moon Icon -->
+                            <svg class="theme-toggle-icon moon-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                            </svg>
+                        </span>
+                    </button>
+
                     @auth
                     <div class="flex items-center space-x-3">
                         <div class="hidden sm:flex flex-col items-end">
-                            <span class="text-sm font-medium text-white">{{ auth()->user()->name }}</span>
-                            <span class="text-xs text-gray-400">{{ auth()->user()->role->name ?? 'User' }}</span>
+                            <span class="text-sm font-medium text-theme-primary">{{ auth()->user()->name }}</span>
+                            <span class="text-xs text-theme-muted">{{ auth()->user()->role->name ?? 'User' }}</span>
                         </div>
                         <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold shadow-lg">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200" title="{{ __('Logout') }}">
+                            <button type="submit" class="p-2 text-theme-muted hover:text-theme-primary hover:bg-white/10 dark:hover:bg-white/10 rounded-lg transition-all duration-200" title="{{ __('Logout') }}">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                                 </svg>
@@ -134,7 +156,7 @@
                         </form>
                     </div>
                     @else
-                    <a href="{{ route('login') }}" class="text-gray-300 hover:text-white transition-colors">{{ __('Login') }}</a>
+                    <a href="{{ route('login') }}" class="text-theme-secondary hover:text-theme-primary transition-colors">{{ __('Login') }}</a>
                     <a href="{{ route('register') }}" class="btn-primary text-sm">{{ __('Register') }}</a>
                     @endauth
                 </div>
@@ -175,7 +197,7 @@
     <!-- Footer -->
     <footer class="py-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p class="text-center text-gray-500 text-sm">
+            <p class="text-center text-theme-muted text-sm">
                 © {{ date('Y') }} World Building. Crafted with 💜
             </p>
         </div>
@@ -184,11 +206,31 @@
     <!-- Alpine.js for dropdown -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
+    <!-- Theme Toggle Script -->
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        themeToggle.addEventListener('click', () => {
+            const html = document.documentElement;
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+    
     <!-- Star Rain Effect Script -->
     <script>
         function createStar() {
             const container = document.getElementById('stars-container');
             if (!container) return;
+            
+            // Only create stars in dark mode
+            if (!document.documentElement.classList.contains('dark')) return;
             
             const star = document.createElement('div');
             star.className = 'star';

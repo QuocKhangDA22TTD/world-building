@@ -5,10 +5,10 @@
 @section('content')
 <!-- Header -->
 <div class="mb-8">
-    <h1 class="text-4xl font-bold text-white mb-2">
+    <h1 class="text-4xl font-bold text-theme-primary mb-2">
         {{ __('Welcome back') }}, <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">{{ auth()->user()->name }}</span>! 👋
     </h1>
-    <p class="text-gray-400">{{ __("Here's what's happening with your worlds today.") }}</p>
+    <p class="text-theme-muted">{{ __("Here's what's happening with your worlds today.") }}</p>
 </div>
 
 <!-- Stats Grid -->
@@ -17,7 +17,7 @@
     <div class="stat-card glass-card animate-fade-in-up stagger-1" style="opacity: 0;">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-gray-500 text-sm font-medium mb-1">{{ __('My Worlds') }}</p>
+                <p class="text-theme-muted text-sm font-medium mb-1">{{ __('My Worlds') }}</p>
                 <p class="text-4xl font-bold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
                     {{ $worlds->count() }}
                 </p>
@@ -42,7 +42,7 @@
     <div class="stat-card glass-card animate-fade-in-up stagger-2" style="opacity: 0;">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-gray-500 text-sm font-medium mb-1">{{ __('Total Entities') }}</p>
+                <p class="text-theme-muted text-sm font-medium mb-1">{{ __('Total Entities') }}</p>
                 <p class="text-4xl font-bold bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">
                     {{ $totalEntities }}
                 </p>
@@ -53,7 +53,7 @@
                 </svg>
             </div>
         </div>
-        <div class="mt-4 flex items-center text-sm text-gray-500">
+        <div class="mt-4 flex items-center text-sm text-theme-muted">
             <span>{{ __('Across all worlds') }}</span>
         </div>
     </div>
@@ -63,7 +63,7 @@
     <div class="stat-card glass-card animate-fade-in-up stagger-3" style="opacity: 0;">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-gray-500 text-sm font-medium mb-1">{{ __('Total Users') }}</p>
+                <p class="text-theme-muted text-sm font-medium mb-1">{{ __('Total Users') }}</p>
                 <p class="text-4xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                     {{ $totalUsers }}
                 </p>
@@ -74,7 +74,7 @@
                 </svg>
             </div>
         </div>
-        <div class="mt-4 flex items-center text-sm text-gray-500">
+        <div class="mt-4 flex items-center text-sm text-theme-muted">
             <span>{{ __('Registered users') }}</span>
         </div>
     </div>
@@ -83,10 +83,10 @@
 
 <!-- My Worlds Section -->
 <div class="glass-card rounded-2xl overflow-hidden animate-fade-in-up stagger-4" style="opacity: 0;">
-    <div class="px-6 py-5 border-b border-gray-200/50 flex justify-between items-center">
+    <div class="px-6 py-5 border-b border-gray-200/50 dark:border-white/10 flex justify-between items-center">
         <div>
-            <h2 class="text-xl font-bold text-gray-800">{{ __('My Worlds') }}</h2>
-            <p class="text-sm text-gray-500">{{ __('Manage your creative universes') }}</p>
+            <h2 class="text-xl font-bold text-theme-primary">{{ __('My Worlds') }}</h2>
+            <p class="text-sm text-theme-muted">{{ __('Manage your creative universes') }}</p>
         </div>
         <a href="{{ route('worlds.create') }}" class="btn-primary flex items-center space-x-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,8 +104,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </div>
-            <h3 class="text-lg font-semibold text-gray-700 mb-2">{{ __('No worlds yet') }}</h3>
-            <p class="text-gray-500 mb-4">{{ __('Start building your first world and bring your imagination to life!') }}</p>
+            <h3 class="text-lg font-semibold text-theme-secondary mb-2">{{ __('No worlds yet') }}</h3>
+            <p class="text-theme-muted mb-4">{{ __('Start building your first world and bring your imagination to life!') }}</p>
             <a href="{{ route('worlds.create') }}" class="btn-primary inline-flex items-center space-x-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -116,7 +116,7 @@
         @else
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($worlds as $index => $world)
-            <div class="world-card border border-gray-100 p-5 animate-fade-in-up" style="animation-delay: {{ ($index + 1) * 0.1 }}s;">
+            <div class="world-card border border-gray-100 dark:border-white/10 p-5 animate-fade-in-up" style="animation-delay: {{ ($index + 1) * 0.1 }}s;">
                 <div class="relative z-10">
                     <div class="flex items-start justify-between mb-3">
                         <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">
@@ -125,11 +125,11 @@
                         <span class="tag tag-blue">{{ $world->entities_count }} {{ __('entities') }}</span>
                     </div>
                     
-                    <h3 class="font-bold text-lg text-gray-800 mb-2">{{ $world->name }}</h3>
-                    <p class="text-sm text-gray-500 mb-4 line-clamp-2">{{ Str::limit($world->description, 80) ?: __('No description') }}</p>
+                    <h3 class="font-bold text-lg text-theme-primary mb-2">{{ $world->name }}</h3>
+                    <p class="text-sm text-theme-muted mb-4 line-clamp-2">{{ Str::limit($world->description, 80) ?: __('No description') }}</p>
                     
-                    <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                        <span class="text-xs text-gray-400">
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/10">
+                        <span class="text-xs text-theme-muted">
                             {{ $world->created_at->diffForHumans() }}
                         </span>
                         <a href="{{ route('worlds.show', $world) }}" class="text-indigo-500 hover:text-indigo-700 font-medium text-sm flex items-center space-x-1 group">
