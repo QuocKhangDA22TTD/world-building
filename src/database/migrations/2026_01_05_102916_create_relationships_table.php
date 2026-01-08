@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('relationships', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('world_id')->constrained('worlds')->onDelete('cascade');
-            $table->foreignId('from_entity_id')->constrained('entities')->onDelete('cascade');
-            $table->foreignId('to_entity_id')->constrained('entities')->onDelete('cascade');
+            $table->foreignId('world_id')->constrained('worlds')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('from_entity_id')->constrained('entities')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('to_entity_id')->constrained('entities')->onUpdate('cascade')->onDelete('cascade');
             $table->string('relation_type', 100);
             $table->text('description')->nullable();
         });

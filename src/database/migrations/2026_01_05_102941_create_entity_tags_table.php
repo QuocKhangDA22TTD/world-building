@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('entity_tags', function (Blueprint $table) {
-            $table->foreignId('entity_id')->constrained('entities')->onDelete('cascade');
-            $table->foreignId('tag_id')->constrained('tags')->onDelete('cascade');
+            $table->foreignId('entity_id')->constrained('entities')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('tag_id')->constrained('tags')->onUpdate('cascade')->onDelete('cascade');
             $table->primary(['entity_id', 'tag_id']);
         });
     }

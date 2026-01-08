@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('worlds', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('owner_id')->constrained('users');
+            $table->foreignId('owner_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name');
             $table->text('description')->nullable();
             $table->timestamp('created_at')->useCurrent();

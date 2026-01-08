@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('world_id')->constrained('worlds')->onDelete('cascade');
+            $table->foreignId('world_id')->constrained('worlds')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name', 100);
             $table->unique(['world_id', 'name'], 'unique_tag_world');
         });
