@@ -147,12 +147,9 @@ class GeminiService
      */
     public function generateWorld(string $description, string $language = 'vi'): ?array
     {
-        $langInstruction = $language === 'vi' 
-            ? 'Trả lời bằng tiếng Việt.' 
-            : 'Respond in English.';
-            
         $prompt = <<<PROMPT
-{$langInstruction}
+QUAN TRỌNG: Tất cả nội dung tạo ra PHẢI viết bằng TIẾNG VIỆT. Tên, mô tả, loại quan hệ, tags - tất cả đều phải bằng tiếng Việt.
+
 Bạn là một AI chuyên tạo thế giới (world building) cho game, truyện, phim.
 
 Dựa trên mô tả sau, hãy tạo một thế giới hoàn chỉnh với cấu trúc JSON:
@@ -162,30 +159,30 @@ MÔ TẢ: {$description}
 Trả về JSON với cấu trúc CHÍNH XÁC như sau (không thêm markdown, chỉ JSON thuần):
 {
     "world": {
-        "name": "Tên thế giới",
-        "description": "Mô tả chi tiết về thế giới (2-3 đoạn văn)"
+        "name": "Tên thế giới (tiếng Việt)",
+        "description": "Mô tả chi tiết về thế giới bằng tiếng Việt (2-3 đoạn văn)"
     },
     "entity_types": [
-        {"name": "Loại 1"},
+        {"name": "Loại 1 (tiếng Việt, ví dụ: Nhân vật, Địa điểm, Vật phẩm)"},
         {"name": "Loại 2"}
     ],
     "entities": [
         {
-            "name": "Tên thực thể",
+            "name": "Tên thực thể (tiếng Việt)",
             "type": "Loại thực thể (phải khớp với entity_types)",
-            "description": "Mô tả chi tiết"
+            "description": "Mô tả chi tiết bằng tiếng Việt"
         }
     ],
     "relationships": [
         {
             "from": "Tên thực thể 1",
             "to": "Tên thực thể 2", 
-            "type": "Loại quan hệ (ví dụ: bạn bè, kẻ thù, gia đình, đồng minh)",
-            "description": "Mô tả quan hệ"
+            "type": "Loại quan hệ bằng tiếng Việt (ví dụ: bạn bè, kẻ thù, gia đình, đồng minh, sư phụ, đệ tử)",
+            "description": "Mô tả quan hệ bằng tiếng Việt"
         }
     ],
     "tags": [
-        {"name": "Tag 1"},
+        {"name": "Tag bằng tiếng Việt (ví dụ: Anh hùng, Phản diện, Bí ẩn)"},
         {"name": "Tag 2"}
     ],
     "entity_tags": [
@@ -197,6 +194,7 @@ Trả về JSON với cấu trúc CHÍNH XÁC như sau (không thêm markdown, c
 }
 
 YÊU CẦU:
+- TẤT CẢ nội dung PHẢI viết bằng TIẾNG VIỆT (tên, mô tả, loại, tags)
 - Tạo ít nhất 3-5 entity_types phù hợp với thế giới
 - Tạo ít nhất 5-10 entities đa dạng
 - Tạo ít nhất 5-10 relationships giữa các entities
@@ -242,14 +240,11 @@ PROMPT;
      */
     public function modifyWorld(array $worldData, string $userRequest, string $language = 'vi'): ?array
     {
-        $langInstruction = $language === 'vi' 
-            ? 'Trả lời bằng tiếng Việt.' 
-            : 'Respond in English.';
-        
         $worldJson = json_encode($worldData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         
         $prompt = <<<PROMPT
-{$langInstruction}
+QUAN TRỌNG: Tất cả nội dung tạo ra PHẢI viết bằng TIẾNG VIỆT. Tên, mô tả, loại quan hệ, tags - tất cả đều phải bằng tiếng Việt.
+
 Bạn là một AI chuyên chỉnh sửa thế giới (world building) cho game, truyện, phim.
 
 DỮ LIỆU THẾ GIỚI HIỆN TẠI:
@@ -338,10 +333,6 @@ PROMPT;
      */
     public function chatAboutWorld(array $worldData, string $userMessage, array $chatHistory = [], string $language = 'vi'): ?array
     {
-        $langInstruction = $language === 'vi' 
-            ? 'Trả lời bằng tiếng Việt.' 
-            : 'Respond in English.';
-        
         $worldJson = json_encode($worldData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         
         // Build chat history context
@@ -355,7 +346,8 @@ PROMPT;
         }
         
         $prompt = <<<PROMPT
-{$langInstruction}
+QUAN TRỌNG: Tất cả nội dung tạo ra PHẢI viết bằng TIẾNG VIỆT. Tên, mô tả, loại quan hệ, tags, câu trả lời - tất cả đều phải bằng tiếng Việt.
+
 Bạn là một AI trợ lý chuyên về world building. Bạn đang giúp người dùng với thế giới của họ.
 
 DỮ LIỆU THẾ GIỚI:
