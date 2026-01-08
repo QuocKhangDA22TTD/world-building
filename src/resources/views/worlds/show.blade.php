@@ -45,10 +45,10 @@
 </div>
 
 <!-- AI Chat Panel (Hidden by default) -->
-<div id="ai-chat-panel" class="hidden fixed right-0 top-0 h-full w-full sm:w-96 z-50 animate-slide-in-right">
-    <div class="h-full glass-dark border-l border-white/10 flex flex-col">
+<div id="ai-chat-panel" class="hidden fixed inset-y-0 right-0 w-full sm:w-96 z-50">
+    <div class="h-screen flex flex-col bg-slate-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl">
         <!-- Chat Header -->
-        <div class="p-4 border-b border-white/10 flex items-center justify-between">
+        <div class="flex-shrink-0 p-4 border-b border-white/10 flex items-center justify-between bg-slate-800/50">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@
         </div>
         
         <!-- Chat Messages -->
-        <div id="ai-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <div id="ai-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
             <!-- Welcome Message -->
             <div class="flex items-start space-x-3">
                 <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
@@ -89,7 +89,7 @@
         </div>
         
         <!-- Pending Changes (Hidden by default) -->
-        <div id="ai-pending-changes" class="hidden border-t border-white/10 p-4 bg-yellow-500/10">
+        <div id="ai-pending-changes" class="hidden flex-shrink-0 border-t border-white/10 p-4 bg-yellow-500/10">
             <div class="flex items-center justify-between mb-3">
                 <span class="text-sm font-medium text-yellow-400">{{ __('Pending Changes') }}</span>
                 <div class="flex space-x-2">
@@ -105,7 +105,7 @@
         </div>
         
         <!-- Chat Input -->
-        <div class="p-4 border-t border-white/10">
+        <div class="flex-shrink-0 p-4 border-t border-white/10 bg-slate-800/50">
             <form id="ai-chat-form" class="flex space-x-2">
                 <input type="text" id="ai-chat-input" 
                     class="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
@@ -524,19 +524,17 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
+#ai-chat-panel {
+    animation: slide-in-right 0.3s ease-out;
+}
+
 @keyframes slide-in-right {
     from {
         transform: translateX(100%);
-        opacity: 0;
     }
     to {
         transform: translateX(0);
-        opacity: 1;
     }
-}
-
-.animate-slide-in-right {
-    animation: slide-in-right 0.3s ease-out;
 }
 
 #ai-chat-messages::-webkit-scrollbar {
