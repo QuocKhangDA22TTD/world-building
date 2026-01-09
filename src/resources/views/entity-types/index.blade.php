@@ -5,40 +5,39 @@
 @section('content')
 <div class="mb-6">
     <div class="flex justify-between items-center mb-4">
-        <h1 class="text-3xl font-bold text-gray-900">Entity Types - {{ $world->name }}</h1>
-        <a href="{{ route('worlds.show', $world) }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+        <h1 class="text-3xl font-bold text-theme-primary">Entity Types - {{ $world->name }}</h1>
+        <a href="{{ route('worlds.show', $world) }}" class="btn-secondary">
             Back to World
         </a>
     </div>
 </div>
 
-<div class="bg-white rounded-lg shadow p-6 mb-6">
-    <h2 class="text-xl font-semibold mb-4">Create New Entity Type</h2>
+<div class="glass-card rounded-lg p-6 mb-6">
+    <h2 class="text-xl font-semibold text-theme-primary mb-4">Create New Entity Type</h2>
     <form method="POST" action="{{ route('entity-types.store') }}" class="flex gap-3">
         @csrf
         <input type="hidden" name="world_id" value="{{ $world->id }}">
-        <input type="text" name="name" placeholder="Type name..." required
-            class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
-        <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+        <input type="text" name="name" placeholder="Type name..." required class="input-modern flex-1">
+        <button type="submit" class="btn-primary">
             Create
         </button>
     </form>
 </div>
 
-<div class="bg-white rounded-lg shadow overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+<div class="glass-card rounded-lg overflow-hidden">
+    <table class="table-modern min-w-full">
+        <thead>
             <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Entities Count</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th class="px-6 py-3 text-left">Name</th>
+                <th class="px-6 py-3 text-left">Entities Count</th>
+                <th class="px-6 py-3 text-left">Actions</th>
             </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="divide-y divide-gray-200">
             @forelse($types as $type)
             <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $type->name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $type->entities_count }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-theme-primary">{{ $type->name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-theme-secondary">{{ $type->entities_count }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                     <form method="POST" action="{{ route('entity-types.destroy', $type) }}" class="inline">
                         @csrf @method('DELETE')
@@ -48,7 +47,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="3" class="px-6 py-4 text-center text-gray-500">No entity types yet</td>
+                <td colspan="3" class="px-6 py-4 text-center text-theme-muted">No entity types yet</td>
             </tr>
             @endforelse
         </tbody>

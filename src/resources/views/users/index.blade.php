@@ -6,8 +6,8 @@
 <!-- Header -->
 <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in-up">
     <div>
-        <h1 class="text-3xl font-bold text-white mb-2">{{ __('Users Management') }}</h1>
-        <p class="text-gray-400">{{ __('Manage all registered users') }}</p>
+        <h1 class="text-3xl font-bold text-theme-primary mb-2">{{ __('Users Management') }}</h1>
+        <p class="text-theme-secondary">{{ __('Manage all registered users') }}</p>
     </div>
     <a href="{{ route('users.create') }}" class="btn-primary flex items-center space-x-2 w-fit">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,8 +22,8 @@
     <div class="stat-card glass-card animate-fade-in-up stagger-1" style="opacity: 0;">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-gray-500 text-sm">{{ __('Total Users') }}</p>
-                <p class="text-3xl font-bold text-gray-800">{{ $users->count() }}</p>
+                <p class="text-theme-muted text-sm">{{ __('Total Users') }}</p>
+                <p class="text-3xl font-bold text-theme-primary">{{ $users->count() }}</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,7 +35,7 @@
     <div class="stat-card glass-card animate-fade-in-up stagger-2" style="opacity: 0;">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-gray-500 text-sm">{{ __('Admins') }}</p>
+                <p class="text-theme-muted text-sm">{{ __('Admins') }}</p>
                 <p class="text-3xl font-bold text-purple-600">{{ $users->filter(fn($u) => $u->role && in_array($u->role->name, ['admin', 'super_admin']))->count() }}</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white">
@@ -48,7 +48,7 @@
     <div class="stat-card glass-card animate-fade-in-up stagger-3" style="opacity: 0;">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-gray-500 text-sm">{{ __('Regular Users') }}</p>
+                <p class="text-theme-muted text-sm">{{ __('Regular Users') }}</p>
                 <p class="text-3xl font-bold text-green-600">{{ $users->filter(fn($u) => !$u->role || $u->role->name === 'user')->count() }}</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center text-white">
@@ -61,7 +61,7 @@
     <div class="stat-card glass-card animate-fade-in-up stagger-4" style="opacity: 0;">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-gray-500 text-sm">{{ __('Total Worlds') }}</p>
+                <p class="text-theme-muted text-sm">{{ __('Total Worlds') }}</p>
                 <p class="text-3xl font-bold text-orange-600">{{ $users->sum(fn($u) => $u->worlds->count()) }}</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 flex items-center justify-center text-white">
@@ -96,14 +96,14 @@
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
                             <div>
-                                <p class="font-semibold text-gray-800">{{ $user->name }}</p>
+                                <p class="font-semibold text-theme-primary">{{ $user->name }}</p>
                                 @if($user->id === auth()->id())
                                 <span class="text-xs text-indigo-500">({{ __('You') }})</span>
                                 @endif
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 text-gray-600">{{ $user->email }}</td>
+                    <td class="px-6 py-4 text-theme-secondary">{{ $user->email }}</td>
                     <td class="px-6 py-4 text-center">
                         @php
                             $roleName = $user->role->name ?? 'user';
@@ -119,9 +119,9 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span class="font-semibold text-gray-700">{{ $user->worlds->count() }}</span>
+                        <span class="font-semibold text-theme-secondary">{{ $user->worlds->count() }}</span>
                     </td>
-                    <td class="px-6 py-4 text-center text-sm text-gray-500">
+                    <td class="px-6 py-4 text-center text-sm text-theme-muted">
                         {{ $user->created_at->format('M d, Y') }}
                     </td>
                     <td class="px-6 py-4">

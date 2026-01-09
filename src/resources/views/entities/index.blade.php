@@ -7,18 +7,18 @@
 <div class="mb-8 animate-fade-in-up">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <div>
-            <div class="flex items-center space-x-2 text-gray-400 text-sm mb-2">
-                <a href="{{ route('worlds.index') }}" class="hover:text-white transition-colors">Worlds</a>
+            <div class="flex items-center space-x-2 text-theme-muted text-sm mb-2">
+                <a href="{{ route('worlds.index') }}" class="hover:text-theme-primary transition-colors">Worlds</a>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
-                <a href="{{ route('worlds.show', $world) }}" class="hover:text-white transition-colors">{{ $world->name }}</a>
+                <a href="{{ route('worlds.show', $world) }}" class="hover:text-theme-primary transition-colors">{{ $world->name }}</a>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
-                <span class="text-white">Entities</span>
+                <span class="text-theme-secondary">Entities</span>
             </div>
-            <h1 class="text-3xl font-bold text-white">Entities</h1>
+            <h1 class="text-3xl font-bold text-theme-primary">Entities</h1>
         </div>
         <div class="flex items-center space-x-3">
             <a href="{{ route('entities.create', ['world_id' => $world->id]) }}" class="btn-primary flex items-center space-x-2">
@@ -86,8 +86,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
         </svg>
     </div>
-    <h3 class="text-xl font-bold text-gray-800 mb-2">No entities found</h3>
-    <p class="text-gray-500 mb-6">Start populating your world with characters, locations, items, and more!</p>
+    <h3 class="text-xl font-bold text-theme-primary mb-2">No entities found</h3>
+    <p class="text-theme-muted mb-6">Start populating your world with characters, locations, items, and more!</p>
     <a href="{{ route('entities.create', ['world_id' => $world->id]) }}" class="btn-primary inline-flex items-center space-x-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -117,8 +117,8 @@
                                 {{ strtoupper(substr($entity->name, 0, 1)) }}
                             </div>
                             <div>
-                                <p class="font-semibold text-gray-800">{{ $entity->name }}</p>
-                                <p class="text-xs text-gray-400 max-w-xs truncate">{{ Str::limit($entity->description, 50) }}</p>
+                                <p class="font-semibold text-theme-primary">{{ $entity->name }}</p>
+                                <p class="text-xs text-theme-muted max-w-xs truncate">{{ Str::limit($entity->description, 50) }}</p>
                             </div>
                         </div>
                     </td>
@@ -130,7 +130,7 @@
                             @forelse($entity->tags as $tag)
                             <span class="tag tag-blue text-xs">{{ $tag->name }}</span>
                             @empty
-                            <span class="text-gray-400 text-sm">No tags</span>
+                            <span class="text-theme-muted text-sm">No tags</span>
                             @endforelse
                         </div>
                     </td>

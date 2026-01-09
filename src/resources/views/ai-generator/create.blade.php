@@ -11,8 +11,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
             </svg>
         </div>
-        <h1 class="text-3xl font-bold text-white mb-2">{{ __('AI World Generator') }}</h1>
-        <p class="text-gray-400 max-w-xl mx-auto">{{ __('Describe your world and let AI create everything for you - entities, relationships, tags, and more!') }}</p>
+        <h1 class="text-3xl font-bold text-theme-primary mb-2">{{ __('AI World Generator') }}</h1>
+        <p class="text-theme-secondary max-w-xl mx-auto">{{ __('Describe your world and let AI create everything for you - entities, relationships, tags, and more!') }}</p>
     </div>
 
     @if(!$hasApiKeys)
@@ -23,8 +23,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
             </svg>
         </div>
-        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ __('AI Service Not Configured') }}</h3>
-        <p class="text-gray-500 mb-4">{{ __('Please add GEMINI_API_KEYS to your .env file to use this feature.') }}</p>
+        <h3 class="text-xl font-bold text-theme-primary mb-2">{{ __('AI Service Not Configured') }}</h3>
+        <p class="text-theme-muted mb-4">{{ __('Please add GEMINI_API_KEYS to your .env file to use this feature.') }}</p>
         <a href="{{ route('worlds.create') }}" class="btn-primary inline-flex items-center space-x-2">
             <span>{{ __('Create World Manually') }}</span>
         </a>
@@ -36,20 +36,20 @@
             @csrf
             
             <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-theme-secondary mb-2">
                     {{ __('Describe your world') }} <span class="text-red-500">*</span>
                 </label>
                 <textarea name="description" id="description" rows="6" required
                     class="input-modern w-full resize-none"
                     placeholder="{{ __('Example: A medieval fantasy world with dragons, knights, and magic. There are several kingdoms at war, ancient ruins hiding powerful artifacts, and mysterious creatures lurking in dark forests...') }}">{{ old('description') }}</textarea>
-                <p class="mt-2 text-sm text-gray-500">
+                <p class="mt-2 text-sm text-theme-muted">
                     {{ __('Be as detailed as possible. The more you describe, the better the AI can create your world.') }}
                 </p>
             </div>
 
             <!-- Examples -->
             <div class="mb-6">
-                <p class="text-sm font-medium text-gray-700 mb-3">{{ __('Quick examples (click to use)') }}:</p>
+                <p class="text-sm font-medium text-theme-secondary mb-3">{{ __('Quick examples (click to use)') }}:</p>
                 <div class="flex flex-wrap gap-2">
                     <button type="button" class="example-btn tag tag-blue cursor-pointer hover:scale-105" 
                         data-text="{{ __('A cyberpunk city in 2150 with mega-corporations, hackers, AI robots, and underground resistance movements fighting for freedom.') }}">
@@ -91,8 +91,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                 </svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">{{ __('Creating your world...') }}</h3>
-            <p class="text-gray-500">{{ __('AI is generating entities, relationships, and tags. This may take 30-60 seconds.') }}</p>
+            <h3 class="text-xl font-bold text-theme-primary mb-2">{{ __('Creating your world...') }}</h3>
+            <p class="text-theme-muted">{{ __('AI is generating entities, relationships, and tags. This may take 30-60 seconds.') }}</p>
             <div class="mt-4 h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse" style="width: 60%;"></div>
             </div>
@@ -108,8 +108,8 @@
                 </svg>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-800">{{ __('Tips for better results') }}</p>
-                <ul class="text-sm text-gray-600 mt-1 space-y-1">
+                <p class="text-sm font-medium text-theme-primary">{{ __('Tips for better results') }}</p>
+                <ul class="text-sm text-theme-muted mt-1 space-y-1">
                     <li>• {{ __('Describe the setting, time period, and atmosphere') }}</li>
                     <li>• {{ __('Mention key characters or factions') }}</li>
                     <li>• {{ __('Include conflicts, mysteries, or goals') }}</li>
