@@ -11,8 +11,13 @@
                 {{ strtoupper(substr($world->name, 0, 1)) }}
             </div>
             <div>
+<<<<<<< HEAD
                 <h1 class="text-3xl font-bold text-theme-primary">{{ $world->name }}</h1>
                 <p class="text-theme-secondary">{{ __('Created') }} {{ $world->created_at->diffForHumans() }}</p>
+=======
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $world->name }}</h1>
+                <p class="text-gray-500 dark:text-gray-400">{{ __('Created') }} {{ $world->created_at->diffForHumans() }}</p>
+>>>>>>> e6f6c3a1db5feb3029cb2fd333da959111fd4873
             </div>
         </div>
         <div class="flex items-center space-x-3">
@@ -45,10 +50,16 @@
 </div>
 
 <!-- AI Chat Panel (Hidden by default) -->
-<div id="ai-chat-panel" class="hidden fixed inset-y-0 right-0 w-full sm:w-96 z-50">
-    <div class="h-screen flex flex-col bg-slate-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl">
+<div id="ai-chat-panel" class="hidden fixed right-0 top-1/2 -translate-y-1/2 w-full sm:w-96 z-50" style="resize: both; overflow: hidden;">
+    <!-- Drag Handle Left -->
+    <div class="absolute top-0 -left-1 bottom-0 w-1 bg-gradient-to-b from-purple-500 via-pink-500 to-purple-500 cursor-ew-resize hover:w-1.5 transition-all" id="ai-resize-left" title="Kéo để thay đổi chiều rộng"></div>
+    
+    <div class="h-96 flex flex-col bg-slate-900/95 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl">
+        <!-- Drag Handle Top -->
+        <div class="flex-none h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 cursor-ns-resize hover:h-3 transition-all rounded-t-2xl" id="ai-resize-top" title="Kéo để thay đổi chiều cao"></div>
+        
         <!-- Chat Header -->
-        <div class="flex-shrink-0 p-4 border-b border-white/10 flex items-center justify-between bg-slate-800/50">
+        <div class="flex-none p-4 border-b border-white/10 flex items-center justify-between bg-slate-800/50">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +79,7 @@
         </div>
         
         <!-- Chat Messages -->
-        <div id="ai-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+        <div id="ai-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4" style="min-height: 0;">
             <!-- Welcome Message -->
             <div class="flex items-start space-x-3">
                 <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
@@ -89,7 +100,7 @@
         </div>
         
         <!-- Pending Changes (Hidden by default) -->
-        <div id="ai-pending-changes" class="hidden flex-shrink-0 border-t border-white/10 p-4 bg-yellow-500/10">
+        <div id="ai-pending-changes" class="hidden flex-none border-t border-white/10 p-4 bg-yellow-500/10">
             <div class="flex items-center justify-between mb-3">
                 <span class="text-sm font-medium text-yellow-400">{{ __('Pending Changes') }}</span>
                 <div class="flex space-x-2">
@@ -104,8 +115,8 @@
             <p id="ai-changes-summary" class="text-xs text-gray-400"></p>
         </div>
         
-        <!-- Chat Input -->
-        <div class="flex-shrink-0 p-4 border-t border-white/10 bg-slate-800/50">
+        <!-- Chat Input - Fixed at bottom -->
+        <div class="flex-none p-4 border-t border-white/10 bg-slate-800/50">
             <form id="ai-chat-form" class="flex space-x-2">
                 <input type="text" id="ai-chat-input" 
                     class="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
@@ -504,6 +515,70 @@ document.addEventListener('DOMContentLoaded', function() {
         hidePendingChanges();
         addMessage('{{ __("Changes rejected.") }}', false);
     });
+    
+    // Resize functionality
+    setTimeout(() => {
+        const resizeTop = document.getElementById('ai-resize-top');
+        const resizeLeft = document.getElementById('ai-resize-left');
+        let isResizing = false;
+        let resizeMode = null;
+        let startY, startX, startHeight, startWidth;
+        
+        function startResizeTop(e) {
+            e.preventDefault();
+            isResizing = true;
+            resizeMode = 'top';
+            startY = e.clientY;
+            startHeight = chatPanel.offsetHeight;
+            document.addEventListener('mousemove', handleResize);
+            document.addEventListener('mouseup', stopResize);
+            document.body.style.cursor = 'ns-resize';
+        }
+        
+        function startResizeLeft(e) {
+            e.preventDefault();
+            isResizing = true;
+            resizeMode = 'left';
+            startX = e.clientX;
+            startWidth = chatPanel.offsetWidth;
+            document.addEventListener('mousemove', handleResize);
+            document.addEventListener('mouseup', stopResize);
+            document.body.style.cursor = 'ew-resize';
+        }
+        
+        function handleResize(e) {
+            if (!isResizing) return;
+            
+            if (resizeMode === 'top') {
+                const delta = e.clientY - startY;
+                const newHeight = startHeight - delta;
+                if (newHeight > 200 && newHeight < window.innerHeight - 100) {
+                    chatPanel.style.height = newHeight + 'px';
+                }
+            } else if (resizeMode === 'left') {
+                const delta = e.clientX - startX;
+                const newWidth = startWidth + delta;
+                if (newWidth > 300 && newWidth < window.innerWidth - 50) {
+                    chatPanel.style.width = newWidth + 'px';
+                }
+            }
+        }
+        
+        function stopResize() {
+            isResizing = false;
+            resizeMode = null;
+            document.removeEventListener('mousemove', handleResize);
+            document.removeEventListener('mouseup', stopResize);
+            document.body.style.cursor = 'auto';
+        }
+        
+        if (resizeTop) {
+            resizeTop.addEventListener('mousedown', startResizeTop);
+        }
+        if (resizeLeft) {
+            resizeLeft.addEventListener('mousedown', startResizeLeft);
+        }
+    }, 100);
     
     // Keyboard shortcut to open chat (Ctrl+Shift+A)
     document.addEventListener('keydown', function(e) {

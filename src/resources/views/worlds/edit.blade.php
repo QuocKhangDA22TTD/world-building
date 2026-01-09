@@ -6,6 +6,7 @@
 <div class="max-w-2xl mx-auto">
     <!-- Header -->
     <div class="mb-8 animate-fade-in-up">
+<<<<<<< HEAD
         <div class="flex items-center space-x-2 text-theme-muted text-sm mb-2">
             <a href="{{ route('worlds.index') }}" class="hover:text-theme-primary transition-colors">{{ __('Worlds') }}</a>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -18,6 +19,20 @@
             <span class="text-theme-secondary">{{ __('Edit') }}</span>
         </div>
         <h1 class="text-3xl font-bold text-theme-primary">{{ __('Edit World') }}</h1>
+=======
+        <div class="flex items-center space-x-2 text-gray-500 dark:text-gray-400 text-sm mb-2">
+            <a href="{{ route('worlds.index') }}" class="hover:text-gray-900 dark:hover:text-white transition-colors">{{ __('Worlds') }}</a>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            <a href="{{ route('worlds.show', $world) }}" class="hover:text-gray-900 dark:hover:text-white transition-colors">{{ $world->name }}</a>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            <span class="text-gray-900 dark:text-white">{{ __('Edit') }}</span>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ __('Edit World') }}</h1>
+>>>>>>> e6f6c3a1db5feb3029cb2fd333da959111fd4873
     </div>
 
     <!-- Form -->
